@@ -12,5 +12,3 @@
       (format t "Tu edad es par.~%"))))
 
 (verificar-edad)
-
-
