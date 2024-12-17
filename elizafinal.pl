@@ -1,4 +1,9 @@
-eliza:-	writeln('Hola , mi nombre es  Eliza tu  chatbot,
+% Carlos Fabricio Martinez Martinez 21120230 
+% Eliza
+% Instituto Tecnologico de Morelia 
+% Ing. Sistemas Computacionales
+
+eliza:-	writeln('Hola , mi nombre es  Eliza tu amigo,
 	por favor ingresa tu consulta,
 	usar solo minúsculas sin . al final:'),
 	readln(Input),
@@ -57,6 +62,8 @@ template([como, estas, tu, '?'], [yo, estoy, bien, ',', gracias, por, preguntar,
 
 
 
+% templates por defecto que se agregan 10 mas
+
 
 template([hola, _], ['Hola', '!'], []).
 template([buenos, dias], ['Buenos', 'dias', '!'], []).
@@ -105,33 +112,31 @@ template([quienes, son, las, hijas, de, s(_)], [flagdaughter], [5]).
 
 
 
+% templates de resolver pregunta de medicos 
 
+template([resuelve, problema, de, medicos, y, hospitales], [flagResolveProblem], [5]).
+template([cual, es, la, especialidad, de, s(Nombre)], [flagFindEspecialidadMedico], [5]).
+template([cual, es, el, hospital, de, s(Nombre)], [flagFindHospitalMedico], [5]).
+template([cual, es, el, equipo, medico, de, s(Nombre)], [flagFindEquipoMedico], [6]).
+template([cual, es, el, interes, de, investigacion, de, s(Nombre)], [flagFindInteresInvestigacion], [7]).
 
 
 
 % templates de mascotas akinator
 
 template([todos, los, perros, de, la, raza, s(Raza)],[flagtodosperros],[6]).
-template([tiene, s(Nombre), la, caracteristica, de, ser, s(Caracteristica)], [flagcaracteristicaespecifica], [5, 7]).
+template([tiene, s(Nombre), la, caracteristica, de, ser, s(Caracteristica)], [flagcaracteristicaespecifica], [1, 6]).
 template([cuantos, perros, son, s(Caracteristica)], [flagcantidadperros], [3]).
-template([cuales, son, todas, las, razas, disponibles], [flagrazasdisponibles], []).
+
 template([que, perros, de, la, raza, s(Raza), son, s(Caracteristica)], [flagperrosderaza], [5, 7]).
 template([existe, algun, perro, que, sea, s(Caracteristica)], [flagexisteperro], [5]).
-template([cual, es, el, nombre, del, perro, que, es, s(Caracteristica)], [flagnombreperro], [5]).
-template([que, perros, no, son, s(Caracteristica)], [flagnoson], [5]).
+template([cual, es, el, nombre, del, perro, que, es, s(Caracteristica)], [flagnombreperro], [8]).
+template([que, perros, no, son, s(Caracteristica)], [flagnoson], [4]).
 template([que, caracteristicas, tiene, la, raza, s(Raza)], [flagcaracteristicasderaza], [5]).
-template([informacion, de, s(Nombre)], [flaginformacion], [5]).
+template([informacion, de, s(Nombre)], [flaginformacion], [2]).
 
 
 				  
-
-
-
-
-
-
-
-
 
 
 
@@ -291,6 +296,80 @@ mascota(energetico, chihuahua, pirinola).
 
 
 % A qui termiana Hehos mascotas de akinator
+
+
+
+
+
+% Hechos iniciales
+doctores([ana, bruno, carla, diego, elena]).
+especialidades([cardiologia, neurologia, oncologia, pediatria, dermatologia]).
+hospitales([general, regional, universitario, privado, militar]).
+equipos([ecografo, resonancia, tomografo, dermatoscopio, electrocardiografo]).
+intereses([genetica, farmacologia, inmunologia, bioetica, microbiologia]).
+
+% Definición de permutacion/2
+permutacion([], []).
+permutacion(Lista, [Elemento|PermutacionResto]) :-
+    select(Elemento, Lista, ListaSinElemento),
+    permutacion(ListaSinElemento, PermutacionResto).
+
+% Solución del problema
+resolver(Resultado) :-
+    % Definimos los atributos de cada doctor
+    Resultado = [
+        [ana, EspecialidadAna, HospitalAna, EquipoAna, InteresAna],
+        [bruno, EspecialidadBruno, HospitalBruno, EquipoBruno, InteresBruno],
+        [carla, EspecialidadCarla, HospitalCarla, EquipoCarla, InteresCarla],
+        [diego, EspecialidadDiego, HospitalDiego, EquipoDiego, InteresDiego],
+        [elena, EspecialidadElena, HospitalElena, EquipoElena, InteresElena]
+    ],
+
+    % Restricciones básicas
+    especialidades(Especialidades), permutacion(Especialidades, [EspecialidadAna, EspecialidadBruno, EspecialidadCarla, EspecialidadDiego, EspecialidadElena]),
+    hospitales(Hospitales), permutacion(Hospitales, [HospitalAna, HospitalBruno, HospitalCarla, HospitalDiego, HospitalElena]),
+    equipos(Equipos), permutacion(Equipos, [EquipoAna, EquipoBruno, EquipoCarla, EquipoDiego, EquipoElena]),
+    intereses(Intereses), permutacion(Intereses, [InteresAna, InteresBruno, InteresCarla, InteresDiego, InteresElena]),
+
+    % Aplicamos las pistas
+    % 1. Carla no trabaja en el Hospital General ni en el Privado, y no estudia neurología.
+    HospitalCarla \= general, HospitalCarla \= privado, EspecialidadCarla \= neurologia,
+
+    % 2. La persona que utiliza el electrocardiógrafo trabaja en cardiología en el Hospital Militar, pero no es Diego.
+    member([_, cardiologia, militar, electrocardiografo, _], Resultado),
+    not(member([diego, cardiologia, militar, electrocardiografo, _], Resultado)),
+
+    % 3. Bruno está interesado en farmacología, pero no trabaja en el Hospital Regional ni en el Militar.
+    InteresBruno = farmacologia, HospitalBruno \= regional, HospitalBruno \= militar,
+
+    % 4. La persona que utiliza el ecógrafo trabaja en pediatría y no es del Hospital Universitario ni del Militar.
+    member([_, pediatria, HospitalPediatria, ecografo, _], Resultado), HospitalPediatria \= universitario, HospitalPediatria \= militar,
+
+    % 5. El especialista en oncología trabaja en el Hospital General y utiliza un tomógrafo.
+    member([_, oncologia, general, tomografo, _], Resultado),
+
+    % 6. El médico interesado en inmunología usa el resonador magnético, pero no es Elena.
+    member([_, _, _, resonancia, inmunologia], Resultado), not(member([elena, _, _, resonancia, inmunologia], Resultado)),
+
+    % 7. El médico del Hospital Regional se dedica a dermatología.
+    member([_, dermatologia, regional, _, _], Resultado),
+
+    % 8. Elena está interesada en bioética y no utiliza el electrocardiógrafo.
+    InteresElena = bioetica, EquipoElena \= electrocardiografo,
+
+    % 9. Diego es el experto en microbiología.
+    InteresDiego = microbiologia,
+
+    % 10. El médico del Hospital Universitario utiliza un dermatoscopio.
+    member([_, _, universitario, dermatoscopio, _], Resultado).
+
+
+
+
+
+elizaResolveProblem( R) :- resolver(Resultado),
+                           R = ['Claro',  asi, se, organiza, el, hospital, Resultado].
+
 
 
 
@@ -630,12 +709,85 @@ replace0([I|_], Input, _, Resp, R) :-
     Resp = [flagcousins | _], findall(X, primos(Atom, X), R), !.
 
 
-% Eliza is:
-replace0([I|_], Input, _, Resp, R):-
-	nth0(I, Input, Atom),
-	nth0(0, Resp, X),
-	X == flagIs,
-	elizaIs(Atom, R).
+
+
+
+
+
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Atom),
+    nth0(0, Resp, X),   
+    X == flagResolveProblem,
+    elizaResolveProblem(R).
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagFindHospitalMedico,  
+    resolver(Resultado),          
+    (member([Nombre, _, Hospital, _, _], Resultado) -> 
+        R = ['El hospital de', Nombre, 'es', Hospital]
+    ;
+        R = ['Lo siento, no encontre informacion para el medico llamado', Nombre]).
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),  
+    nth0(0, Resp, X), 
+    X == flagFindEspecialidadMedico,  
+    resolver(Resultado),             
+    (member([Nombre, Especialidad, _, _, _], Resultado) -> 
+        R = ['La especialidad de', Nombre, 'es', Especialidad]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),
+    nth0(0, Resp, X),
+    X == flagFindHospitalMedico, 
+    resolver(Resultado),              
+    (member([Nombre, _, Hospital, _, _], Resultado) -> 
+        R = ['El hospital de', Nombre, 'es', Hospital]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).
+
+% Encuentra el equipo medico del medico
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),
+    nth0(0, Resp, X), 
+    X == flagFindEquipoMedico, 
+    resolver(Resultado),              
+    (member([Nombre, _, _, Equipo, _], Resultado) -> 
+        R = ['El equipo medico de', Nombre, 'es', Equipo]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).
+
+replace0([I|_], Input, _, Resp, R):- 
+    nth0(I, Input, Nombre),
+    nth0(0, Resp, X), 
+    X == flagFindInteresInvestigacion, 
+    resolver(Resultado),              
+    (member([Nombre, _, _, _, Interes], Resultado) -> 
+        R = ['El interes de investigacion de', Nombre, 'es', Interes]
+    ;   
+        R = ['Lo siento, no encontre informacion sobre', Nombre]).
+
+
+
+
+
+
+
+
+
+
+
+    % Eliza is:
+    replace0([I|_], Input, _, Resp, R):-
+        nth0(I, Input, Atom),
+        nth0(0, Resp, X),
+        X == flagIs,
+        elizaIs(Atom, R).
 
 
 replace0([I|Index], Input, N, Resp, R):-
