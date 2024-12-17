@@ -1,27 +1,48 @@
-(defparameter *nodes* '((Blanco (
-					(hombre(Hola Carlos))
-					(mujer(Hola Ana))
-					(cosa(Hola objeto))
-					(extraterrestre(HELLO MADAFAKA))))
-				(Negro(
-					(hombre(Hola Brayan no me asaltes))
-					(mujer(Hola Angela))
-					(cosa(Hola cosa))
-					(extraterrestre(HELLO MADAFAKA))))
-				(Panista(
-					(hombre(Hola riqui riquin canayin))
-					(mujer(Hola Xochitl que bueno que no ganaste))
-					(persona(Hola))
-					(aire(ana))))
-				(AMLOVER(
-					(hombre(Hola AMLO))
-					(mujer(Hola CLaudia))
-					(aire(ana))
-					(aire(ana))))	
-				(AMLOVER(
-					(hombre(Hola AMLO))
-					(mujer(Hola CLaudia))
-					(aire(ana))
-					(aire(ana))))				
-					
-ALMENOS 5 NIVELES DE TAREA
+
+
+(defun recorre (lista) 
+    (when lista 
+        (let ((elemento (car lista)))
+        (format t "¿Tu personaje es a?%" (car elemento)) 
+        (setq a (read))
+        (if (string-equal a "si")
+            (progn
+                (setq b (cadr (assoc (car elemento) lista)))
+                (recorre b)
+            )
+        (recorre (cdr lista))
+        )
+        )
+    )
+)
+
+
+
+(defparameter *nodes* '((Labrador (
+                                        (jugueton(Buddy))
+                                        (tranquilo(Lucy))
+                                        (cazador(Spot))
+                                        (amigable(Max))))
+                             (Husky (
+                                        (energetico(Luna))
+                                        (inteligente(Ace))
+                                        (amigable(Bella))
+                                        (resistente(Apollo))))
+                             (salchicha (
+                                        (curioso(Oliver))
+                                        (jugueton(Molly))
+                                        (rastreador(Charlie))
+                                        (amistoso(Sadie))))
+                             (Dalmata (
+                                        (activo(Pongo))
+                                        (pintoresco(Perdita))
+                                        (rapido(Daisy))
+                                        (alerta(Rocky))))
+                             (Chihuahua (
+                                        (pequeno(Tiny))
+                                        (valiente(Spike))
+                                        (leal(Chip))
+                                        (energetico(Fifi)))
+										
+							 )))
+

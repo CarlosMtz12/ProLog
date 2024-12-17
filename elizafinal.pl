@@ -224,6 +224,43 @@ hija(PadreOMadre, Hija) :-
 % aqui termina mi familia 
 
 
+
+
+
+% Hehos mascotas de akinator
+
+mascota(labrador, jugueton, buddy).
+mascota(labrador, tranquilo, lucy).
+mascota(labrador, cazador, spot).
+mascota(labrador, amigable, max).
+
+mascota(husky, energetico, luna).
+mascota(husky, inteligente, ace).
+mascota(husky, amigable, bella).
+mascota(husky, resistente, apollo).
+
+mascota(salchicha, curioso, oliver).
+mascota(salchicha, jugueton, molly).
+mascota(salchicha, rastreador, charlie).
+mascota(salchicha, amistoso, sadie).
+
+mascota(dalmata, activo, pongo).
+mascota(dalmata, pintoresco, perdita).
+mascota(dalmata, rapido, daisy).
+mascota(dalmata, alerta, rocky).
+
+mascota(chihuahua, pequeno, tiny).
+mascota(chihuahua, valiente, spike).
+mascota(chihuahua, leal, chip).
+mascota(chihuahua, energetico, fifi).
+
+
+% A qui termiana Hehos mascotas de akinator
+
+
+
+
+
 % Lo que le gusta a eliza : flagLike
 elizaLikes(X, R):- likes(X), R = ['Yeah', i, like, X].
 elizaLikes(X, R):- \+likes(X), R = ['Nope', i, do, not, like, X].
