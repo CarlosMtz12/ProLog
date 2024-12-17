@@ -84,6 +84,10 @@ template([please, s(_), _], ['No', i, can, not, help, ',', i, am, just, a, machi
 		 template([tell, me, a, s(_), _], ['No', i, can, not, ',', i, am, bad, at, that], []).
 
 
+
+
+
+
 % Templates de familia
 template([quien, es, el, padre, de, s(_)], [flagfather], [5]).
 template([quien, es, la, madre, de, s(_)], [flagmother], [5]).
@@ -99,7 +103,38 @@ template([quienes, son, los, hijos, de, s(_)], [flagson], [5]).
 template([quienes, son, las, hijas, de, s(_)], [flagdaughter], [5]).
 
 
+
+
+
+
+
+
+% templates de mascotas akinator
+
+template([todos, los, perros, de, la, raza, s(Raza)],[flagtodosperros],[6]).
+template([tiene, s(Nombre), la, caracteristica, de, ser, s(Caracteristica)], [flagcaracteristicaespecifica], [5, 7]).
+template([cuantos, perros, son, s(Caracteristica)], [flagcantidadperros], [3]).
+template([cuales, son, todas, las, razas, disponibles], [flagrazasdisponibles], []).
+template([que, perros, de, la, raza, s(Raza), son, s(Caracteristica)], [flagperrosderaza], [5, 7]).
+template([existe, algun, perro, que, sea, s(Caracteristica)], [flagexisteperro], [5]).
+template([cual, es, el, nombre, del, perro, que, es, s(Caracteristica)], [flagnombreperro], [5]).
+template([que, perros, no, son, s(Caracteristica)], [flagnoson], [5]).
+template([que, caracteristicas, tiene, la, raza, s(Raza)], [flagcaracteristicasderaza], [5]).
+template([informacion, de, s(Nombre)], [flaginformacion], [5]).
+
+
 				  
+
+
+
+
+
+
+
+
+
+
+
 template(_, ['Please', explain, a, little, more, '.'], []). 
 
 
@@ -229,30 +264,30 @@ hija(PadreOMadre, Hija) :-
 
 % Hehos mascotas de akinator
 
-mascota(labrador, jugueton, buddy).
-mascota(labrador, tranquilo, lucy).
-mascota(labrador, cazador, spot).
-mascota(labrador, amigable, max).
+mascota(jugueton, labrador, buddy).
+mascota(tranquilo, labrador, lucy).
+mascota(cazador, labrador, spot).
+mascota(enojon, labrador, max).
 
-mascota(husky, energetico, luna).
-mascota(husky, inteligente, ace).
-mascota(husky, amigable, bella).
-mascota(husky, resistente, apollo).
+mascota(leal, husky, mailo).
+mascota(inteligente, husky, ace).
+mascota(amigable, husky, bella).
+mascota(resistente, husky, apollo).
 
-mascota(salchicha, curioso, oliver).
-mascota(salchicha, jugueton, molly).
-mascota(salchicha, rastreador, charlie).
-mascota(salchicha, amistoso, sadie).
+mascota(curioso, salchicha, oliver).
+mascota(jugueton, salchicha, molly).
+mascota(rastreador, salchicha, charlie).
+mascota(amistoso, salchicha, sadie).
 
-mascota(dalmata, activo, pongo).
-mascota(dalmata, pintoresco, perdita).
-mascota(dalmata, rapido, daisy).
-mascota(dalmata, alerta, rocky).
+mascota(activo, dalmata, pongo).
+mascota(valiente, dalmata, manchas).
+mascota(rapido, dalmata, daisy).
+mascota(alerta, dalmata, rocky).
 
-mascota(chihuahua, pequeno, tiny).
-mascota(chihuahua, valiente, spike).
-mascota(chihuahua, leal, chip).
-mascota(chihuahua, energetico, fifi).
+mascota(pequeno, chihuahua, minimi).
+mascota(nervioso, chihuahua, nerviosin).
+mascota(dormilon, chihuahua, oski).
+mascota(energetico, chihuahua, pirinola).
 
 
 % A qui termiana Hehos mascotas de akinator
@@ -287,6 +322,43 @@ elizaquemegusta(_, R) :-
     findall(["A Eliza le gusta ", Gusto], likes(Gusto), Results), 
     flatten(Results, R).
 
+elizatodosperros(Raza, R):- 
+    findall(Nombre, mascota(_, Raza, Nombre), Nombres),
+    (   Nombres \= [] % Verifica si la lista no está vacía
+    ->  R = ['Si', estas, son, todos, los, perros, de, la, raza, Raza, ':', Nombres]
+    ;   R = ['No', hay, perros, de, la, raza, Raza]
+    ).
+
+verifica_caracteristica(Nombre, Caracteristica, R):- 
+    (   mascota(Caracteristica, _, Nombre)
+    ->  R = ['Sí, ', Nombre, ' tiene la característica de ser ', Caracteristica]
+    ;   R = ['No, ', Nombre, ' no tiene la característica de ser ', Caracteristica]).
+
+cuenta_perros(Caracteristica, R):- 
+    findall(Nombre, mascota(Caracteristica, _, Nombre), Perros),
+    length(Perros, Cantidad),
+    R = ['Hay ', Cantidad, ' perros que son ', Caracteristica].
+
+lista_razas(R):- 
+    setof(Raza, Caracteristica^Nombre^mascota(Caracteristica, Raza, Nombre), Razas),
+    R = ['Las razas disponibles son: ', Razas].
+
+perros_de_raza(Raza, Caracteristica, R):- 
+    findall(Nombre, mascota(Caracteristica, Raza, Nombre), Nombres),
+    R = ['Los perros de la raza ', Raza, ' que son ', Caracteristica, ' incluyen: ', Nombres].
+
+existe_perro(Caracteristica, R):- 
+    (   mascota(Caracteristica, _, _)
+    ->  R = ['Sí, existe al menos un perro que es ', Caracteristica]
+    ;   R = ['No, no existe ningún perro que sea ', Caracteristica]).
+
+caracteristicas_de_raza(Raza, R):- 
+    setof(Caracteristica, Nombre^mascota(Caracteristica, Raza, Nombre), Caracteristicas),
+    R = ['Las características de la raza ', Raza, ' incluyen: ', Caracteristicas].
+
+informacion_perro(Nombre, R):- 
+    findall(Caracteristica-Raza, mascota(Caracteristica, Raza, Nombre), Informacion),
+    R = ['La información de ', Nombre, ' incluye: ', Informacion].
 
 
 
@@ -357,6 +429,62 @@ replace0([I|_], Input, _, Resp, R):-
 	nth0(0, Resp, X),
 	X == flagDo,
 	elizaDoes(Atom, R).
+
+
+
+
+
+replace0([I|_], Input, _, Resp, R):-
+	nth0(I, Input, Atom), 
+    nth0(0, Resp, X),
+    X == flagtodosperros,
+    elizatodosperros(Atom, R).
+
+
+replace0([INombre, ICaracteristica|_], Input, _, Resp, R):-
+    nth0(INombre, Input, AtomNombre),
+    nth0(ICaracteristica, Input, AtomCaracteristica),
+    nth0(0, Resp, X),
+    X == flagcaracteristicaespecifica,
+    verifica_caracteristica(AtomNombre, AtomCaracteristica, R).
+
+replace0([ICaracteristica|_], Input, _, Resp, R):-
+    nth0(ICaracteristica, Input, AtomCaracteristica),
+    nth0(0, Resp, X),
+    X == flagcantidadperros,
+    cuenta_perros(AtomCaracteristica, R).
+
+replace0([], _, _, Resp, R):-
+    nth0(0, Resp, X),
+    X == flagrazasdisponibles,
+    lista_razas(R).
+
+replace0([IRaza, ICaracteristica|_], Input, _, Resp, R):-
+    nth0(IRaza, Input, AtomRaza),
+    nth0(ICaracteristica, Input, AtomCaracteristica),
+    nth0(0, Resp, X),
+    X == flagperrosderaza,
+    perros_de_raza(AtomRaza, AtomCaracteristica, R).
+
+replace0([ICaracteristica|_], Input, _, Resp, R):-
+    nth0(ICaracteristica, Input, AtomCaracteristica),
+    nth0(0, Resp, X),
+    X == flagexisteperro,
+    existe_perro(AtomCaracteristica, R).
+
+replace0([IRaza|_], Input, _, Resp, R):-
+    nth0(IRaza, Input, AtomRaza),
+    nth0(0, Resp, X),
+    X == flagcaracteristicasderaza,
+    caracteristicas_de_raza(AtomRaza, R).
+
+replace0([INombre|_], Input, _, Resp, R):-
+    nth0(INombre, Input, AtomNombre),
+    nth0(0, Resp, X),
+    X == flaginformacion,
+    informacion_perro(AtomNombre, R).
+
+
 
 % Manejo especifico para flagfather
 replace0([I|_], Input, _, Resp, R) :-
