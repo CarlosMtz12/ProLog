@@ -18,6 +18,10 @@
 					(mujer(Hola CLaudia))
 					(aire(ana))
 					(aire(ana))))	
-							
+				(AMLOVER(
+					(hombre(Hola AMLO))
+					(mujer(Hola CLaudia))
+					(aire(ana))
+					(aire(ana))))				
 					
 ALMENOS 5 NIVELES DE TAREA
